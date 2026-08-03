@@ -1,0 +1,51 @@
+---
+- name: Install OpenJDK 21
+  apt:
+    name: openjdk-21-jdk
+    state: present
+    update_cache: yes
+
+- name: Add Jenkins repository key
+  shell: |
+    wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg
+  args:
+    creates: /usr/share/keyrings/jenkins-keyring.gpg
+
+- name: Add Jenkins repository
+  shell: |
+    echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.gpg] https://pkg.jenkins.io/debian-stable binary/" > /etc/apt/sources.list.d/jenkins.list
+  args:
+    creates: /etc/apt/sources.list.d/jenkins.list
+
+- name: Update apt package cache
+  apt:
+    update_cache: yes
+
+- name: Install Jenkins
+  apt:
+    name: jenkins
+    state: present
+  notify: Restart Jenkins
+
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+
+- name: Add Jenkins user to Docker group
+  user:
+    name: jenkins
+    groups: docker
+    append: yes
+
+- name: Enable and start Docker
+  service:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Enable and start Jenkins
+  service:
+    name: jenkins
+    enabled: yes
+    state: started

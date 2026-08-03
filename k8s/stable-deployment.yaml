@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptimeguard-stable-dep
+  namespace: uptimeguard
+  labels:
+    app: uptimeguard-stable
+    track: stable
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: uptimeguard-stable
+      track: stable
+  template:
+    metadata:
+      labels:
+        app: uptimeguard-stable
+        track: stable
+    spec:
+      imagePullSecrets:
+        - name: ecr-secret
+      containers:
+        - name: uptimeguard-stable-container
+          image: <ecr-repo-url>:v1
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5

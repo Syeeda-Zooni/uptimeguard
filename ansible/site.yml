@@ -1,0 +1,22 @@
+---
+- name: Configure all servers
+  hosts: all
+  become: true
+
+  roles:
+    - common
+
+- name: Configure the jenkins server
+  hosts: jenkins
+  become: true
+
+  roles:
+    - jenkins
+
+
+- name: Configure the kubernetes server
+  hosts: k8s_clusters
+  become: true
+
+  roles:
+    - k8s_prereqs

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StatusPulse {{ version }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    :root { --accent: {{ color }}; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">StatusPulse</div>
+    <span class="version-badge">{{ version }}</span>
+    <nav>
+      <a href="/">Status</a>
+      {% if feature_incidents %}<a href="/incidents">Incident History</a>{% endif %}
+    </nav>
+  </header>
+
+  <main class="content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <span>Running version {{ version }}{% if feature_incidents %} &middot; incident history enabled{% endif %}</span>
+  </footer>
+</body>
+</html>

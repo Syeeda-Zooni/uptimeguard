@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptimeguard-canary-dep
+  namespace: uptimeguard
+  labels:
+    app: uptimeguard-canary
+    track: canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptimeguard-canary
+      track: canary
+  template:
+    metadata:
+      labels:
+        app: uptimeguard-canary
+        track: canary
+    spec:
+      imagePullSecrets:
+        - name: ecr-secret
+      containers:
+        - name: uptimeguard-canary-container
+          image: <ecr-repo-url>:v2
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5

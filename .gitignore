@@ -1,0 +1,30 @@
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ansible
+ansible/inventory.ini
+*.retry
+
+# Keys
+*.pem
+*.key
+*_rsa
+*_rsa.pub
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# OS junk
+.DS_Store
+Thumbs.db

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Incident History</h1>
+  <section class="incident-list">
+    {% for incident in incidents %}
+    <div class="incident-row">
+      <div class="incident-header">
+        <span class="incident-service">{{ incident.service }}</span>
+        <span class="incident-status incident-status-{{ incident.status|lower|replace(' ', '-') }}">{{ incident.status }}</span>
+      </div>
+      <div class="incident-title">{{ incident.title }}</div>
+      <div class="incident-time">Started {{ incident.started }}</div>
+    </div>
+    {% endfor %}
+  </section>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="overall-banner {{ overall_status }}">
+    {% if overall_status == "operational" %}
+      All systems operational
+    {% else %}
+      Some systems experiencing issues
+    {% endif %}
+  </section>
+
+  <section class="service-list">
+    {% for service in services %}
+    <div class="service-row">
+      <div class="service-name">{{ service.name }}</div>
+      <div class="service-uptime">{{ service.uptime }}% uptime (30d)</div>
+      <div class="status-badge status-{{ service.status }}">{{ status_labels[service.status] }}</div>
+    </div>
+    {% endfor %}
+  </section>
+
+  {% if feature_incidents %}
+  <section class="callout">
+    <p>New: view the <a href="/incidents">Incident History</a>, now available in this release.</p>
+  </section>
+  {% endif %}
+{% endblock %}

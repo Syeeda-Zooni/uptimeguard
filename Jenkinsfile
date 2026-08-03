@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Syeeda-Zooni/uptimeguard.git'
+            }
+        }
+
+        stage('Build Stable Image (v1)') {
+            steps {
+                sh "docker build --build-arg APP_VERSION=v1 --build-arg FEATURE_INCIDENTS=false -t ${ECR_REPO}:v1 appfiles/"
+            }
+        }
+
+        stage('Build Canary Image (v2)') {
+            steps {
+                sh "docker build --build-arg APP_VERSION=v2 --build-arg FEATURE_INCIDENTS=true -t ${ECR_REPO}:v2 appfiles/"
+            }
+        }
+
+        stage('Login to ECR') {
+            steps {
+                sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}"
+            }
+        }
+
+        stage('Push Images') {
+            steps {
+                sh "docker push ${ECR_REPO}:v1"
+                sh "docker push ${ECR_REPO}:v2"
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withCredentials([file(credentialsId: 'pulseguard-kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        envsubst < k8s/namespace.yaml | kubectl apply -f -
+                        envsubst < k8s/stable-deployment.yaml | kubectl apply -f -
+                        envsubst < k8s/canary-deployment.yaml | kubectl apply -f -
+                        envsubst < k8s/service.yaml | kubectl apply -f -
+                    '''
+                }
+            }
+        }
+    }
+}
