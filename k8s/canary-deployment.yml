@@ -4,18 +4,18 @@ metadata:
   name: uptimeguard-canary-dep
   namespace: uptimeguard
   labels:
-    app: uptimeguard-canary
+    app: uptimeguard
     track: canary
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: uptimeguard-canary
+      app: uptimeguard
       track: canary
   template:
     metadata:
       labels:
-        app: uptimeguard-canary
+        app: uptimeguard
         track: canary
     spec:
       imagePullSecrets:
