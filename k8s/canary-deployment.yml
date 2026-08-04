@@ -22,7 +22,7 @@ spec:
         - name: ecr-secret
       containers:
         - name: uptimeguard-canary-container
-          image: <ecr-repo-url>:v2
+          image: ${ECR_REPO}:v2
           ports:
             - containerPort: 5000
           livenessProbe:
