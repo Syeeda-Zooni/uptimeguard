@@ -8,6 +8,7 @@ spec:
   selector:
     app: uptimeguard
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 5000
       nodePort: 30080
