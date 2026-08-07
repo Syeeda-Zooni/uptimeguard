@@ -4,25 +4,25 @@ metadata:
   name: uptimeguard-stable-dep
   namespace: uptimeguard
   labels:
-    app: uptimeguard-stable
+    app: uptimeguard
     track: stable
 spec:
   replicas: 4
   selector:
     matchLabels:
-      app: uptimeguard-stable
+      app: uptimeguard
       track: stable
   template:
     metadata:
       labels:
-        app: uptimeguard-stable
+        app: uptimeguard
         track: stable
     spec:
       imagePullSecrets:
         - name: ecr-secret
       containers:
         - name: uptimeguard-stable-container
-          image: <ecr-repo-url>:v1
+          image: ${ECR_REPO}:v1
           ports:
             - containerPort: 5000
           livenessProbe:

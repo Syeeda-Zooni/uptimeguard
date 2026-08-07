@@ -37,10 +37,10 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'pulseguard-kubeconfig', variable: 'KUBECONFIG')]) {
                     sh '''
-                        envsubst < k8s/namespace.yaml | kubectl apply -f -
+                        envsubst < k8s/namespace.yml | kubectl apply -f -
                         envsubst < k8s/stable-deployment.yaml | kubectl apply -f -
-                        envsubst < k8s/canary-deployment.yaml | kubectl apply -f -
-                        envsubst < k8s/service.yaml | kubectl apply -f -
+                        envsubst < k8s/canary-deployment.yml | kubectl apply -f -
+                        envsubst < k8s/service.yml | kubectl apply -f -
                     '''
                 }
             }
