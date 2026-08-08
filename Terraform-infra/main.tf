@@ -204,7 +204,7 @@ resource "aws_instance" "servers" {
   for_each = var.instance_names
 
   ami           = var.ami_id
-  instance_type = var.instance_type
+  instance_type = var.instance_types[each.key]
 
   subnet_id = data.aws_subnets.default.ids[0]
 

@@ -14,9 +14,15 @@ variable "public_key_path" {
   type = string
 }
 
-variable "instance_type" {
-  type = string
-  default = "t3.micro"
+variable "instance_types" {
+  description = "Map of EC2 instance types per role, keyed the same as instance_names"
+  type        = map(string)
+  default = {
+    jenkins = "c7i-flex.large"
+    master  = "c7i-flex.large"
+    worker1 = "m7i-flex.large"
+    worker2 = "m7i-flex.large"
+  }
 }
 
 variable "root_volume_size" {
