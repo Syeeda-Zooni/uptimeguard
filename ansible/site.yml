@@ -15,7 +15,7 @@
 
 
 - name: Configure the kubernetes server
-  hosts: k8s_clusters
+  hosts: k8s_cluster
   become: true
 
   roles:

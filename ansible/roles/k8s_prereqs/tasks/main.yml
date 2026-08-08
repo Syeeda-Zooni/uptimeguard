@@ -1,4 +1,31 @@
 ---
+- name: Ensure required kernel modules are loaded
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - overlay
+    - br_netfilter
+
+- name: Persist kernel modules across reboots
+  copy:
+    dest: /etc/modules-load.d/k8s.conf
+    content: |
+      overlay
+      br_netfilter
+
+- name: Set required sysctl params
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  loop:
+    - { name: "net.bridge.bridge-nf-call-iptables", value: "1" }
+    - { name: "net.bridge.bridge-nf-call-ip6tables", value: "1" }
+    - { name: "net.ipv4.ip_forward", value: "1" }
+
 - name: Create directory for APT keyrings
   file:
     path: /etc/apt/keyrings
@@ -7,9 +34,11 @@
 
 - name: Download Kubernetes repository GPG key
   shell: |
+    set -o pipefail
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.34/deb/Release.key | \
     gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   args:
+    executable: /bin/bash
     creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 - name: Add Kubernetes APT repository

@@ -7,8 +7,10 @@
 
 - name: Add Jenkins repository key
   shell: |
-    wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg
+    set -o pipefail
+    wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key | gpg --dearmor -o /usr/share/keyrings/jenkins-keyring.gpg
   args:
+    executable: /bin/bash
     creates: /usr/share/keyrings/jenkins-keyring.gpg
 
 - name: Add Jenkins repository
