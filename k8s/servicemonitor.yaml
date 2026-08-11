@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: uptimeguard-monitor
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - uptimeguard
+  selector:
+    matchLabels:
+      app: uptimeguard
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
