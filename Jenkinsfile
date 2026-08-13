@@ -45,5 +45,42 @@ pipeline {
                 }
             }
         }
+
+        stage('Monitor Canary Health') {
+            steps {
+                withCredentials([file(credentialsId: 'pulseguard-kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        echo "Canary pod status:"
+                        kubectl get pods -n uptimeguard -l track=canary
+                        echo ""
+                        echo "Check the app and Grafana dashboard, then decide."
+                    '''
+                }
+                input message: "Is the canary version healthy? Promote to stable, or abort to roll back.", ok: "Promote"
+            }
+        }
+
+        stage('Promote Canary to Stable') {
+            steps {
+                withCredentials([file(credentialsId: 'pulseguard-kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        kubectl set image deployment/uptimeguard-stable-dep uptimeguard-stable-container=${ECR_REPO}:v2 -n uptimeguard
+                        kubectl rollout status deployment/uptimeguard-stable-dep -n uptimeguard
+                        kubectl scale deployment/uptimeguard-canary-dep --replicas=0 -n uptimeguard
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        aborted {
+            withCredentials([file(credentialsId: 'pulseguard-kubeconfig', variable: 'KUBECONFIG')]) {
+                sh '''
+                    echo "Canary rejected — rolling back."
+                    kubectl scale deployment/uptimeguard-canary-dep --replicas=0 -n uptimeguard
+                '''
+            }
+        }
     }
 }
